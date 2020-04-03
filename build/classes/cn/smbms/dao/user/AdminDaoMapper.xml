@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="cn.smbms.dao.user.AdminDao">
+    
+    <select id="LoginAdmin" parameterType="cn.smbms.pojo.Admin" resultType="int">
+		select count(*) from Admin where adminId = #{adminId} and adminPwd = #{adminPwd}
+    </select>    
+    <select id="getItems" resultType="cn.smbms.pojo.Item">
+		SELECT * FROM item;
+    </select>    
+     <select id="getItemClasses" resultType="cn.smbms.pojo.ItemClass">
+		SELECT * FROM itemClass;
+    </select>    
+     <select id="getUsers" resultType="cn.smbms.pojo.User">
+		SELECT * FROM User;
+    </select>
+    <select id="getOrders" resultType="cn.smbms.pojo.Order">
+     select orderId,email,orderPrice,orderStatus,DATE_FORMAT(orderTime,'%y-%m-%d %h时') as "orderTime" from user as a,orderbase as b where a.userId = b.userId
+    </select>
+    <select id="getItemBySearch" parameterType = "String" resultType="cn.smbms.pojo.Item">
+    select * from item where itemName like CONCAT('%',#{search},'%') or itemId like CONCAT('%',#{search},'%')
+    </select>
+	<select id="getAnnounces"  resultType="cn.smbms.pojo.Announce">
+    select announId,announTitle,announContent,DATE_FORMAT(annountTime, '%y-%m-%d %h时')  as "annountTime" from announce
+    </select>
+    <select id="getUserBySearch" parameterType = "String" resultType="cn.smbms.pojo.User">
+    select * from user where userid = #{search} or EMail like CONCAT('%',#{search},'%')
+    </select>
+    <select id="getOrderBySearch" parameterType = "String" resultType="cn.smbms.pojo.Order">
+    select orderId,email,orderPrice,orderStatus,DATE_FORMAT(orderTime,'%y-%m-%d %h时') as "orderTime" from user as a , orderbase as b where a.userId = b.userId and (EMail like CONCAT('%',#{search},'%') or orderStatus like CONCAT('%',#{search},'%') or orderId like CONCAT('%',#{search},'%') )
+    </select>
+    <select id="getItemsById" parameterType = "String" resultType="cn.smbms.pojo.Item">
+    select * from Item where itemid = #{itemId}
+    </select>
+    <select id="getItemClassesBySearch" parameterType = "String" resultType="cn.smbms.pojo.ItemClass">
+    SELECT * from itemclass where ItemId like CONCAT('%',#{search},'%') or ItemType like CONCAT('%',#{search},'%')
+    </select>
+      <select id="getAnnounceBySearch" parameterType = "String" resultType="cn.smbms.pojo.Announce">
+    select * from Announce where announId = #{search} or announTitle like CONCAT('%',#{search},'%') or announContent like CONCAT('%',#{search},'%')
+    </select>
+   <insert id="insertItem" parameterType="cn.smbms.pojo.Item" >
+   insert into item(itemName,PriceOld,priceNow,stock,picture,itemType) values(#{itemName},#{priceOld},#{priceNow},#{stock},#{picture},#{itemType})
+   </insert>
+    <insert id="insertItemType" parameterType="cn.smbms.pojo.ItemClass" >
+  	insert into itemClass(itemType) values(#{itemType})
+   </insert>
+    <insert id="insertAnnounce" parameterType="cn.smbms.pojo.Announce" >
+  	insert into announce(announTitle,announContent,annountTime) values(#{announTitle},#{announContent},now())
+   </insert>
+   <delete id="deleteUser" parameterType="cn.smbms.pojo.User">
+   delete from user where userId = #{userId}
+   </delete>
+   <delete id="deleteAnnounce" parameterType="cn.smbms.pojo.Announce">
+   delete from announce where announId = #{announceId}
+   </delete>
+    <delete id="deleteorder" parameterType="cn.smbms.pojo.Order">
+   delete from orderbase where orderId = #{orderId}
+   </delete>
+    <delete id="deleteItemType" parameterType="String">
+   delete from itemClass where itemId = #{ItemTypeId}
+   </delete>
+   <delete id="deleteItem">
+   delete from item where itemId = #{ItemId}
+   </delete>
+   <update id="updateItem">
+   UPDATE item set itemName = #{itemName} ,priceOld = #{priceOld},priceNow = #{priceNow},stock = #{stock},picture = #{picture},itemType = #{itemType} where itemId = #{itemId}
+   </update>
+ </mapper>

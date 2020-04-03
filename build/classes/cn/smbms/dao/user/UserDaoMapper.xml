@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.user.UserDao">
+
+	<select id="getLoginUser" resultType="cn.smbms.pojo.User">
+		select * from user where
+		userId = #{0} and userPwd = #{1}
+	</select>
+
+	<update id="modifyEmail">
+		update user set email = #{1} where userId = #{0}
+	</update>
+
+	<update id="modifyPassword">
+		update user set userPwd = #{1} where userId = #{0}
+	</update>
+
+	<select id="getCartCount" resultType="int">
+		select count(1) from cart, item where cart.itemId = item.itemId and
+		cart.userId = #{0} and item.itemName like concat('%',#{1},'%')
+	</select>
+
+	<resultMap type="cn.smbms.pojo.CartSon" id="cartList">
+		<id property="id" column="id" />
+		<result property="cartId" column="cartId" />
+		<result property="itemType" column="itemType" />
+		<result property="itemName" column="itemName" />
+		<result property="priceOld" column="priceOld" />
+		<result property="priceNow" column="priceNow" />
+		<result property="picture" column="picture" />
+		<result property="buyNum" column="buyNum" />
+	</resultMap>
+
+	<select id="getCartList" resultMap="cartList">
+		select cart.cartId, item.itemType, item.itemName, item.priceOld,
+		item.priceNow, item.picture, cart.buyNum, cart.cartId from cart, item
+		where cart.itemId = item.itemId and cart.userId = #{userId} and
+		item.itemName like concat('%',#{name},'%')
+		order by buyNum limit #{limitPageNo}, #{pageSize};
+	</select>
+
+	<select id="getAnnoList" resultType="cn.smbms.pojo.Announce">
+		select announce.announTitle, announce.annountTime from announce where
+		announTitle like concat('%',#{0},'%');
+	</select>
+
+	<select id="getItemList" resultType="cn.smbms.pojo.Item">
+		select * from item where itemType like concat('%',#{0},'%') and itemName like concat('%',#{1},'%');
+	</select>
+
+	<update id="modifyBuyNum">
+		update cart set buyNum = #{num} where cartId = #{cartId}
+	</update>
+
+	<delete id="deleteCart">
+		delete from cart where cartId = #{0}
+	</delete>
+
+	<select id="getOrderList" resultType="cn.smbms.pojo.Order">
+		select * from order2 where userId = #{0}
+	</select>
+	
+	<delete id="deleteOrder">
+		delete from order2 where orderId = #{0}
+	</delete>
+	
+	<insert id="addCart">
+		insert into cart(cartId, buyNum, userId, itemId) values (#{2}, 1, #{0}, #{1})
+	</insert>
+	
+	<insert id="addOrder">
+		insert into order2 values(#{cartId}, #{orderPrice}, 1, now(), #{userId}, #{buynum})
+	</insert>
+
+</mapper>
